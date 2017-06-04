@@ -1,0 +1,118 @@
+# `colSums2()`
+
+We compare the `DelayedArray::colSums()` method, which uses the 
+block-processing algorithm, to the `DelayedMatrixStats::colSums2()` method, 
+which uses tailored algorithms depending on the *seed* of the *DelayedMatrix* 
+and to the `DelayedMatrixStats:::.colSums2()` method that acts directly on the 
+seed of the *DelayedMatrix* object[^dotted_method]
+
+[^dotted_method]: `DelayedMatrixStats:::.colSums2()` shouldn't be called by the user because it does not realise delayed operations. It is used here for demonstration purposes on a "*pristine*" DelayedMatrix to measure the additional overhead of S4 methods
+
+## Pristine *DelayedMatrix*
+
+```{r colSums2}
+microbenchmark(DelayedArray::colSums(dense_matrix),
+               DelayedMatrixStats::colSums2(dense_matrix),
+               DelayedMatrixStats:::.colSums2(seed(dense_matrix)),
+               times = times)
+total(profmem(DelayedArray::colSums(dense_matrix)))
+total(profmem(DelayedMatrixStats::colSums2(dense_matrix)))
+
+microbenchmark(DelayedArray::colSums(sparse_matrix),
+               DelayedMatrixStats::colSums2(sparse_matrix),
+               DelayedMatrixStats:::.colSums2(seed(sparse_matrix)),
+               Matrix::colSums(seed(sparse_matrix)), 
+               times = times)
+total(profmem(DelayedArray::colSums(sparse_matrix)))
+total(profmem(DelayedMatrixStats::colSums2(sparse_matrix)))
+
+microbenchmark(DelayedArray::colSums(rle_matrix),
+               DelayedMatrixStats::colSums2(rle_matrix),
+               DelayedMatrixStats:::.colSums2(seed(rle_matrix)), 
+               times = times)
+
+total(profmem(DelayedArray::colSums(rle_matrix)))
+total(profmem(DelayedMatrixStats::colSums2(rle_matrix)))
+```
+
+## With row subsetting
+
+```{r colSums2_with_rows}
+i <- sample(nrow(dense_matrix), nrow(dense_matrix) / 10)
+microbenchmark(DelayedArray::colSums(dense_matrix[i, ]),
+               DelayedMatrixStats::colSums2(dense_matrix, rows = i),
+               times = times)
+total(profmem(DelayedArray::colSums(dense_matrix[i, ])))
+total(profmem(DelayedMatrixStats::colSums2(dense_matrix, rows = i)))
+
+microbenchmark(DelayedArray::colSums(sparse_matrix[i, ]),
+               DelayedMatrixStats::colSums2(sparse_matrix, rows = i),
+               times = times)
+total(profmem(DelayedArray::colSums(sparse_matrix[i, ])))
+total(profmem(DelayedMatrixStats::colSums2(sparse_matrix, rows = i)))
+
+i <- sample(nrow(rle_matrix), nrow(rle_matrix) / 10)
+microbenchmark(DelayedArray::colSums(rle_matrix[i, ]),
+               DelayedMatrixStats::colSums2(rle_matrix, rows = i),
+               times = times)
+total(profmem(DelayedArray::colSums(rle_matrix[i, ])))
+total(profmem(DelayedMatrixStats::colSums2(rle_matrix, rows = i)))
+```
+
+## With column subsetting
+
+```{r colSums2_with_cols}
+j <- sample(ncol(dense_matrix), ncol(dense_matrix) / 10)
+microbenchmark(DelayedArray::colSums(dense_matrix[, j]),
+               DelayedMatrixStats::colSums2(dense_matrix, cols = j),
+               times = times)
+total(profmem(DelayedArray::colSums(dense_matrix[, j])))
+total(profmem(DelayedMatrixStats::colSums2(dense_matrix, cols = j)))
+
+microbenchmark(DelayedArray::colSums(sparse_matrix[, j]),
+               DelayedMatrixStats::colSums2(sparse_matrix, cols = j),
+               times = times)
+total(profmem(DelayedArray::colSums(sparse_matrix[, j])))
+total(profmem(DelayedMatrixStats::colSums2(sparse_matrix, cols = j)))
+
+j <- sample(ncol(rle_matrix), ncol(rle_matrix) / 2)
+microbenchmark(DelayedArray::colSums(rle_matrix[, j]),
+               DelayedMatrixStats::colSums2(rle_matrix, cols = j),
+               times = times)
+total(profmem(DelayedArray::colSums(rle_matrix[, j])))
+total(profmem(DelayedMatrixStats::colSums2(rle_matrix, cols = j)))
+```
+
+## With row and column subsetting
+
+```{r colSums2_with_rows_and_cols}
+i <- sample(nrow(dense_matrix), nrow(dense_matrix) / 10)
+j <- sample(ncol(dense_matrix), ncol(dense_matrix) / 10)
+microbenchmark(DelayedArray::colSums(dense_matrix[i, j]),
+               DelayedMatrixStats::colSums2(dense_matrix, rows = i, cols = j),
+               times = times)
+microbenchmark(DelayedArray::colSums(sparse_matrix[i, j]),
+               DelayedMatrixStats::colSums2(sparse_matrix, rows = i, cols = j),
+               times = times)
+i <- sample(nrow(rle_matrix), nrow(rle_matrix) / 10)
+j <- sample(ncol(rle_matrix), ncol(rle_matrix) / 2)
+microbenchmark(DelayedArray::colSums(rle_matrix[i, j]),
+               DelayedMatrixStats::colSums2(rle_matrix, rows = i, cols = j),
+               times = times)
+```
+
+## With delayed ops
+
+```{r colSums2_with_delayed_ops}
+microbenchmark(DelayedArray::colSums(dense_matrix ^ 2),
+               DelayedMatrixStats::colSums2(dense_matrix ^ 2),
+               times = times)
+microbenchmark(DelayedArray::colSums(sparse_matrix ^ 2),
+               DelayedMatrixStats::colSums2(sparse_matrix ^ 2),
+               times = times)
+microbenchmark(DelayedArray::colSums(rle_matrix ^ 2),
+               DelayedMatrixStats::colSums2(rle_matrix ^ 2),
+               times = times)
+```
+
+## Summary

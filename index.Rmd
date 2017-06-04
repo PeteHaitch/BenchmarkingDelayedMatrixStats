@@ -1,0 +1,51 @@
+--- 
+title: "Benchmarking the DelayedMatrixStats package"
+author: "Peter Hickey"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: PeteHaitch/DelayedMatrixStatsBenchmarking
+description: "Benchmarking of the DelayedMatrixStats package"
+---
+
+```{r, include = FALSE, setup}
+knitr::opts_chunk$set(echo = TRUE, comment = "#>", collapse = TRUE,
+                      message = FALSE, warning = TRUE)
+```
+
+# Introduction
+
+The `r BiocStyle::Biocpkg("DelayedArray")` package defines the *DelayedMatrix* 
+class, for wrapping matrix-like objects to provide a unified interface. 
+
+> Wrapping an matrix-like object (typically an on-disk object) in a DelayedMatrix object allows one to perform common matrix operations on it without loading the object in memory. In order to reduce memory usage and optimize performance, operations on the object are either delayed or executed using a block processing mechanism (see `?DelayedArray::DelayedMatrix` for further details)
+
+A big advantage of this is we can use choose different matrix "*backends*" for 
+storing the data while preserving a common interface. Examples of backends and 
+data they are tailored towards using are given below:
+
+| Class        | Package                                | Type of data                       | Example                           |
+|--------------|----------------------------------------|------------------------------------|-----------------------------------|
+| *matrix*     | `r BiocStyle::Rpackage("base")`        | Dense matrix                       | RNA-seq counts matrix             |
+| *dgCMatrix*  | `r BiocStyle::CRANpkg("Matrix")`       | Sparse data                        | Single-cell RNA-seq counts matrix |
+| *HDF5Matrix* | `r BiocStyle::Biocpkg("HDF5Array")`    | Dense matrix too large for memory  | Non-CpG methylation               |
+| *RleArray*   | `r BiocStyle::Biocpkg("DelayedArray")` | Data with runs of identical values | Sequencing coverage               |
+
+## Session info
+
+The R session information when compiling this book is shown below:
+
+```{r session_info}
+devtools::session_info()
+```
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'DelayedMatrixStats', 'matrixStats', 'DelayedArray', 'HDF5Array'
+), 'packages.bib')
+```

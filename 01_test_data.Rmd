@@ -1,0 +1,56 @@
+# Test data {#test_data}
+
+```{r test_data_eval, echo = FALSE, ref.label = "test_data_show", message = FALSE, results = "hide"}
+```
+
+We will benchmark the 
+`r BiocStyle::Githubpkg("PeteHaitch/DelayedMatrixStats")` package using 
+different types of matrix-like data:
+
+- `dense_matrix`: A dense *matrix* with `r ncol(dense_matrix)` columns and `r nrow(dense_matrix)` rows (`r format(object.size(dense_matrix), units = "MB")`)
+- `sparse_matrix`: A sparse *dgcMatrix* with `r ncol(sparse_matrix)` columns and `r nrow(sparse_matrix)` rows where `r round(100 * sum(sparse_matrix == 0) / length(sparse_matrix), 2)`% of entries are zero (`r format(object.size(sparse_matrix), units = "MB")`)
+- `rle_matrix`: An run-length encoded column *RleMatrix* with `r ncol(rle_matrix)` columns and `r nrow(rle_matrix)` rows  (`r format(object.size(rle_matrix), units = "MB")`)
+
+```{r test_data_show, echo = TRUE, message = FALSE}
+library(DelayedMatrixStats)
+library(Matrix)
+library(HDF5Array)
+
+# Dense matrix
+dense_matrix <- DelayedArray(matrix(runif(20000 * 600), nrow = 20000,
+                                  ncol = 600))
+dense_matrix
+
+# 60% zero elements
+sparse_matrix <- seed(dense_matrix)
+zero_idx <- sample(length(sparse_matrix), 0.6 * length(sparse_matrix))
+sparse_matrix[zero_idx] <- 0
+sparse_matrix <- DelayedArray(Matrix::Matrix(sparse_matrix, sparse = TRUE))
+sparse_matrix
+
+# HDF5-backed dense matrix
+# hdf5_matrix <- as(dense_matrix, "HDF5Array")
+
+# Run-length encoded column matrix
+rle_matrix <- RleArray(Rle(sample(2L, 200000 * 6 / 10, replace = TRUE), 100),
+                       dim = c(2000000, 6))
+rle_matrix
+```
+
+Obviously, this is not a comprehensive set of inputs. Rather, it chosen to be 
+somewhat representative of some typical genomics data.
+
+## Measuring performance
+
+```{r profiling_packages_eval, echo = FALSE, ref.label = "profiling_packages_show", message = FALSE, results = "hide"}
+```
+
+Timings are measured using the `r BiocStyle::CRANpkg("microbenchmark")` package 
+using `r times` repetitions (`times`). Memory allocations are reported using 
+the `r BiocStyle::CRANpkg("profmem")` package.
+
+```{r profiling_packages_show, echo = TRUE, message = FALSE}
+library(microbenchmark)
+library(profmem)
+times <- 10
+```
