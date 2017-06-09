@@ -25,7 +25,7 @@
 <meta name="author" content="Peter Hickey">
 
 
-<meta name="date" content="2017-06-04">
+<meta name="date" content="2017-06-09">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -140,22 +140,25 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="colsums2" class="section level1">
 <h1><span class="header-section-number">Chapter 3</span> <code>colSums2()</code></h1>
-<p>We compare the <code>DelayedArray::colSums()</code> method, which uses the block-processing algorithm, to the <code>DelayedMatrixStats::colSums2()</code> method, which uses tailored algorithms depending on the <em>seed</em> of the <em>DelayedMatrix</em> and to the <code>DelayedMatrixStats:::.colSums2()</code> method that acts directly on the seed of the <em>DelayedMatrix</em> object<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
+<p>We compare the <code>DelayedArray::colSums()</code> method, which uses the block-processing algorithm, to the <code>DelayedMatrixStats::colSums2()</code> method, which uses tailored algorithms depending on the <em>seed</em> of the <em>DelayedMatrix</em>, as well as comparing to the <code>colSums2()</code> method that acts directly on the seed of the <em>DelayedMatrix</em> object<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
 <div id="pristine-delayedmatrix" class="section level2">
 <h2><span class="header-section-number">3.1</span> Pristine <em>DelayedMatrix</em></h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">microbenchmark</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(dense_matrix),
                DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(dense_matrix),
-               DelayedMatrixStats<span class="op">:::</span><span class="kw">.colSums2</span>(<span class="kw">seed</span>(dense_matrix)),
+               DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(<span class="kw">seed</span>(dense_matrix)),
+               matrixStats<span class="op">::</span><span class="kw">colSums2</span>(<span class="kw">seed</span>(dense_matrix)),
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
-<span class="co">#&gt;                                                expr        min         lq</span>
-<span class="co">#&gt;                 DelayedArray::colSums(dense_matrix) 1408.61567 1433.98258</span>
-<span class="co">#&gt;          DelayedMatrixStats::colSums2(dense_matrix)   14.00580   14.50890</span>
-<span class="co">#&gt;  DelayedMatrixStats:::.colSums2(seed(dense_matrix))   12.75963   13.24246</span>
+<span class="co">#&gt;                                              expr        min         lq</span>
+<span class="co">#&gt;               DelayedArray::colSums(dense_matrix) 1372.62806 1413.69096</span>
+<span class="co">#&gt;        DelayedMatrixStats::colSums2(dense_matrix)   14.01136   14.58251</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(seed(dense_matrix))   13.56192   14.23526</span>
+<span class="co">#&gt;         matrixStats::colSums2(seed(dense_matrix))   12.75358   13.55193</span>
 <span class="co">#&gt;        mean     median         uq        max neval</span>
-<span class="co">#&gt;  1515.04624 1468.59992 1550.81586 1877.00361    10</span>
-<span class="co">#&gt;    15.66976   15.05065   15.16516   19.91145    10</span>
-<span class="co">#&gt;    14.41188   14.03868   15.12447   16.97410    10</span>
+<span class="co">#&gt;  1535.64806 1528.76268 1565.88300 1883.48125    10</span>
+<span class="co">#&gt;    17.44231   15.61613   19.55338   26.34544    10</span>
+<span class="co">#&gt;    24.44984   14.67078   16.29124   65.17926    10</span>
+<span class="co">#&gt;    21.35598   15.04989   16.57927   59.50204    10</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(dense_matrix)))
 <span class="co">#&gt; [1] 2498171088</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(dense_matrix)))
@@ -163,41 +166,41 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <span class="kw">microbenchmark</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(sparse_matrix),
                DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(sparse_matrix),
-               DelayedMatrixStats<span class="op">:::</span><span class="kw">.colSums2</span>(<span class="kw">seed</span>(sparse_matrix)),
+               DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(<span class="kw">seed</span>(sparse_matrix)),
                Matrix<span class="op">::</span><span class="kw">colSums</span>(<span class="kw">seed</span>(sparse_matrix)), 
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
-<span class="co">#&gt;                                                 expr         min</span>
-<span class="co">#&gt;                 DelayedArray::colSums(sparse_matrix) 1183.847176</span>
-<span class="co">#&gt;          DelayedMatrixStats::colSums2(sparse_matrix)   11.184205</span>
-<span class="co">#&gt;  DelayedMatrixStats:::.colSums2(seed(sparse_matrix))    9.793739</span>
-<span class="co">#&gt;                 Matrix::colSums(seed(sparse_matrix))    9.850097</span>
-<span class="co">#&gt;          lq       mean     median         uq        max neval</span>
-<span class="co">#&gt;  1203.56868 1263.47204 1246.03850 1327.38476 1385.78481    10</span>
-<span class="co">#&gt;    11.27018   13.03639   13.27612   14.54941   15.45832    10</span>
-<span class="co">#&gt;    10.94256   11.56462   11.36510   11.94394   13.74808    10</span>
-<span class="co">#&gt;    10.12159   10.98836   10.55925   12.14756   12.72709    10</span>
+<span class="co">#&gt;                                               expr         min          lq</span>
+<span class="co">#&gt;               DelayedArray::colSums(sparse_matrix) 1178.427799 1207.746887</span>
+<span class="co">#&gt;        DelayedMatrixStats::colSums2(sparse_matrix)   12.257149   13.555155</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(seed(sparse_matrix))   10.200749   10.872538</span>
+<span class="co">#&gt;               Matrix::colSums(seed(sparse_matrix))    9.632101    9.862324</span>
+<span class="co">#&gt;        mean     median         uq        max neval</span>
+<span class="co">#&gt;  1357.79906 1347.20281 1454.17409 1704.23016    10</span>
+<span class="co">#&gt;    14.17737   14.23011   14.84083   15.67269    10</span>
+<span class="co">#&gt;    11.76606   11.52069   12.58772   13.83805    10</span>
+<span class="co">#&gt;    10.74287   10.03771   11.01849   14.75328    10</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(sparse_matrix)))
-<span class="co">#&gt; [1] 1709267504</span>
+<span class="co">#&gt; [1] 1709267496</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(sparse_matrix)))
 <span class="co">#&gt; [1] 5464</span>
 
 <span class="kw">microbenchmark</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(rle_matrix),
                DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(rle_matrix),
-               DelayedMatrixStats<span class="op">:::</span><span class="kw">.colSums2</span>(<span class="kw">seed</span>(rle_matrix)), 
+               DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(<span class="kw">seed</span>(rle_matrix)), 
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
-<span class="co">#&gt;                                              expr         min          lq</span>
-<span class="co">#&gt;                 DelayedArray::colSums(rle_matrix) 2403.753261 2447.157148</span>
-<span class="co">#&gt;          DelayedMatrixStats::colSums2(rle_matrix)    3.753334    3.767261</span>
-<span class="co">#&gt;  DelayedMatrixStats:::.colSums2(seed(rle_matrix))    2.697623    2.723950</span>
+<span class="co">#&gt;                                            expr         min          lq</span>
+<span class="co">#&gt;               DelayedArray::colSums(rle_matrix) 1284.450239 1300.029780</span>
+<span class="co">#&gt;        DelayedMatrixStats::colSums2(rle_matrix)    4.098852    4.309192</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(seed(rle_matrix))    2.683403    2.881191</span>
 <span class="co">#&gt;         mean      median          uq         max neval</span>
-<span class="co">#&gt;  2502.838647 2480.543781 2563.364811 2631.490872    10</span>
-<span class="co">#&gt;     3.986795    3.938854    3.988843    4.708529    10</span>
-<span class="co">#&gt;     8.197613    2.914385    3.718004   46.153767    10</span>
+<span class="co">#&gt;  1421.415066 1331.069420 1450.043244 2041.826413    10</span>
+<span class="co">#&gt;     9.924347    4.425893    6.310903   49.046398    10</span>
+<span class="co">#&gt;     3.531750    3.526952    4.147075    4.344404    10</span>
 
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(rle_matrix)))
-<span class="co">#&gt; [1] 787412248</span>
+<span class="co">#&gt; [1] 594948680</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(rle_matrix)))
 <span class="co">#&gt; [1] 1872</span></code></pre></div>
 </div>
@@ -209,11 +212,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
 <span class="co">#&gt;                                                  expr       min        lq</span>
-<span class="co">#&gt;              DelayedArray::colSums(dense_matrix[i, ]) 187.48875 192.80726</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(dense_matrix, rows = i)  13.49945  13.76257</span>
+<span class="co">#&gt;              DelayedArray::colSums(dense_matrix[i, ]) 196.43436 198.84777</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(dense_matrix, rows = i)  14.02886  14.43554</span>
 <span class="co">#&gt;       mean    median        uq       max neval</span>
-<span class="co">#&gt;  226.72987 195.30400 231.85423 348.03247    10</span>
-<span class="co">#&gt;   14.20651  14.08922  14.45145  15.72646    10</span>
+<span class="co">#&gt;  233.53941 217.23884 250.11575 352.39204    10</span>
+<span class="co">#&gt;   15.76242  14.96629  15.37948  24.26252    10</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(dense_matrix[i, ])))
 <span class="co">#&gt; [1] 326614368</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(dense_matrix, <span class="dt">rows =</span> i)))
@@ -224,15 +227,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
 <span class="co">#&gt;                                                   expr       min        lq</span>
-<span class="co">#&gt;              DelayedArray::colSums(sparse_matrix[i, ]) 188.74200 193.95678</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(sparse_matrix, rows = i)  44.11033  44.67383</span>
-<span class="co">#&gt;       mean    median        uq       max neval</span>
-<span class="co">#&gt;  207.15558 208.61591 219.32978 227.67523    10</span>
-<span class="co">#&gt;   48.45741  47.51677  48.57594  58.05766    10</span>
+<span class="co">#&gt;              DelayedArray::colSums(sparse_matrix[i, ]) 184.17311 205.58022</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(sparse_matrix, rows = i)  44.54429  45.56571</span>
+<span class="co">#&gt;       mean   median        uq       max neval</span>
+<span class="co">#&gt;  248.18029 236.1196 296.25290 352.87500    10</span>
+<span class="co">#&gt;   54.94194  51.4051  57.99285  90.30193    10</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(sparse_matrix[i, ])))
-<span class="co">#&gt; [1] 217286848</span>
+<span class="co">#&gt; [1] 217293904</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(sparse_matrix, <span class="dt">rows =</span> i)))
-<span class="co">#&gt; [1] 5795040</span>
+<span class="co">#&gt; [1] 5802096</span>
 
 i &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">nrow</span>(rle_matrix), <span class="kw">nrow</span>(rle_matrix) <span class="op">/</span><span class="st"> </span><span class="dv">10</span>)
 <span class="kw">microbenchmark</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(rle_matrix[i, ]),
@@ -240,13 +243,13 @@ i &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
 <span class="co">#&gt;                                                expr       min        lq</span>
-<span class="co">#&gt;              DelayedArray::colSums(rle_matrix[i, ])  265.1415  281.9165</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(rle_matrix, rows = i) 2521.6969 2530.8499</span>
-<span class="co">#&gt;       mean    median        uq      max neval</span>
-<span class="co">#&gt;   295.5994  288.7689  318.6109  329.836    10</span>
-<span class="co">#&gt;  2564.1160 2556.6985 2575.4062 2685.863    10</span>
+<span class="co">#&gt;              DelayedArray::colSums(rle_matrix[i, ])  140.2176  146.4898</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(rle_matrix, rows = i) 2478.7272 2590.4027</span>
+<span class="co">#&gt;      mean    median        uq       max neval</span>
+<span class="co">#&gt;   173.989  177.2696  188.9324  220.4917    10</span>
+<span class="co">#&gt;  2652.891 2637.0296 2705.3154 2842.0197    10</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(rle_matrix[i, ])))
-<span class="co">#&gt; [1] 86581048</span>
+<span class="co">#&gt; [1] 62586936</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(rle_matrix, <span class="dt">rows =</span> i)))
 <span class="co">#&gt; [1] 99980704</span></code></pre></div>
 </div>
@@ -258,11 +261,11 @@ i &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
 <span class="co">#&gt;                                                  expr        min</span>
-<span class="co">#&gt;              DelayedArray::colSums(dense_matrix[, j]) 160.602091</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(dense_matrix, cols = j)   2.846538</span>
+<span class="co">#&gt;              DelayedArray::colSums(dense_matrix[, j]) 144.001503</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(dense_matrix, cols = j)   3.403522</span>
 <span class="co">#&gt;          lq       mean     median         uq        max neval</span>
-<span class="co">#&gt;  163.752830 189.342436 165.306212 204.669825 327.949654    10</span>
-<span class="co">#&gt;    3.031495   3.212337   3.124543   3.189582   4.017612    10</span>
+<span class="co">#&gt;  158.218201 179.577895 165.482901 170.935082 298.404129    10</span>
+<span class="co">#&gt;    3.546942   4.048916   3.853625   4.638388   4.814978    10</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(dense_matrix[, j])))
 <span class="co">#&gt; [1] 326835928</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(dense_matrix, <span class="dt">cols =</span> j)))
@@ -273,29 +276,29 @@ i &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
 <span class="co">#&gt;                                                   expr       min        lq</span>
-<span class="co">#&gt;              DelayedArray::colSums(sparse_matrix[, j]) 162.11769 174.45367</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(sparse_matrix, cols = j)  10.76092  12.58258</span>
-<span class="co">#&gt;       mean    median        uq       max neval</span>
-<span class="co">#&gt;  197.77123 178.79578 203.35623 328.86511    10</span>
-<span class="co">#&gt;   13.34045  13.34616  14.48577  14.64604    10</span>
+<span class="co">#&gt;              DelayedArray::colSums(sparse_matrix[, j]) 140.05857 160.16211</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(sparse_matrix, cols = j)  12.56083  13.28289</span>
+<span class="co">#&gt;      mean   median        uq       max neval</span>
+<span class="co">#&gt;  177.8104 175.3931 183.49108 245.73732    10</span>
+<span class="co">#&gt;   15.7835  14.2042  16.55962  24.86061    10</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(sparse_matrix[, j])))
-<span class="co">#&gt; [1] 217160744</span>
+<span class="co">#&gt; [1] 217172248</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(sparse_matrix, <span class="dt">cols =</span> j)))
-<span class="co">#&gt; [1] 5759104</span>
+<span class="co">#&gt; [1] 5770616</span>
 
 j &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">ncol</span>(rle_matrix), <span class="kw">ncol</span>(rle_matrix) <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)
 <span class="kw">microbenchmark</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(rle_matrix[, j]),
                DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(rle_matrix, <span class="dt">cols =</span> j),
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
-<span class="co">#&gt;                                                expr        min          lq</span>
-<span class="co">#&gt;              DelayedArray::colSums(rle_matrix[, j]) 1206.04993 1229.242478</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(rle_matrix, cols = j)    3.56065    3.856014</span>
-<span class="co">#&gt;         mean     median         uq         max neval</span>
-<span class="co">#&gt;  1254.683014 1250.18800 1277.53525 1317.428964    10</span>
-<span class="co">#&gt;     3.956366    3.93841    4.16998    4.431168    10</span>
+<span class="co">#&gt;                                                expr        min         lq</span>
+<span class="co">#&gt;              DelayedArray::colSums(rle_matrix[, j]) 640.158292 648.234104</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(rle_matrix, cols = j)   3.789984   4.062042</span>
+<span class="co">#&gt;        mean    median         uq        max neval</span>
+<span class="co">#&gt;  669.924460 662.49662 679.354278 724.901950    10</span>
+<span class="co">#&gt;    4.469771   4.27734   4.725525   5.678389    10</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(rle_matrix[, j])))
-<span class="co">#&gt; [1] 401708120</span>
+<span class="co">#&gt; [1] 305477264</span>
 <span class="kw">total</span>(<span class="kw">profmem</span>(DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(rle_matrix, <span class="dt">cols =</span> j)))
 <span class="co">#&gt; [1] 1872</span></code></pre></div>
 </div>
@@ -307,34 +310,34 @@ j &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">
                DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(dense_matrix, <span class="dt">rows =</span> i, <span class="dt">cols =</span> j),
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
-<span class="co">#&gt;                                                            expr      min</span>
-<span class="co">#&gt;                       DelayedArray::colSums(dense_matrix[i, j]) 38.16495</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(dense_matrix, rows = i, cols = j)  2.45432</span>
-<span class="co">#&gt;         lq     mean    median        uq        max neval</span>
-<span class="co">#&gt;  42.814124 71.53257 62.697789 68.861067 210.056720    10</span>
-<span class="co">#&gt;   2.504864  2.79146  2.552467  2.703125   4.614551    10</span>
+<span class="co">#&gt;                                                            expr       min</span>
+<span class="co">#&gt;                       DelayedArray::colSums(dense_matrix[i, j]) 38.318997</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(dense_matrix, rows = i, cols = j)  3.097168</span>
+<span class="co">#&gt;         lq      mean    median        uq        max neval</span>
+<span class="co">#&gt;  39.760973 72.702570 61.045170 76.261997 212.543833    10</span>
+<span class="co">#&gt;   3.279971  3.814565  3.713833  4.586598   4.642231    10</span>
 <span class="kw">microbenchmark</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(sparse_matrix[i, j]),
                DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(sparse_matrix, <span class="dt">rows =</span> i, <span class="dt">cols =</span> j),
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
 <span class="co">#&gt;                                                             expr      min</span>
-<span class="co">#&gt;                       DelayedArray::colSums(sparse_matrix[i, j]) 46.49547</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(sparse_matrix, rows = i, cols = j) 42.05782</span>
-<span class="co">#&gt;        lq     mean   median       uq       max neval</span>
-<span class="co">#&gt;  61.82952 62.85905 63.41717 65.98138  85.79071    10</span>
-<span class="co">#&gt;  44.16492 53.69229 46.26637 48.85194 119.13561    10</span>
+<span class="co">#&gt;                       DelayedArray::colSums(sparse_matrix[i, j]) 61.59450</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(sparse_matrix, rows = i, cols = j) 42.37626</span>
+<span class="co">#&gt;        lq     mean   median       uq      max neval</span>
+<span class="co">#&gt;  66.65260 75.01312 67.53065 71.16133 113.7171    10</span>
+<span class="co">#&gt;  47.27844 58.05934 52.11927 55.57983 124.6849    10</span>
 i &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">nrow</span>(rle_matrix), <span class="kw">nrow</span>(rle_matrix) <span class="op">/</span><span class="st"> </span><span class="dv">10</span>)
 j &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">ncol</span>(rle_matrix), <span class="kw">ncol</span>(rle_matrix) <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)
 <span class="kw">microbenchmark</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(rle_matrix[i, j]),
                DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(rle_matrix, <span class="dt">rows =</span> i, <span class="dt">cols =</span> j),
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
-<span class="co">#&gt;                                                          expr       min</span>
-<span class="co">#&gt;                       DelayedArray::colSums(rle_matrix[i, j])  145.6185</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(rle_matrix, rows = i, cols = j) 1255.3213</span>
-<span class="co">#&gt;         lq      mean    median        uq       max neval</span>
-<span class="co">#&gt;   149.0024  158.6695  150.1652  179.6876  184.4764    10</span>
-<span class="co">#&gt;  1268.5583 1287.6573 1286.5773 1302.5283 1331.8413    10</span></code></pre></div>
+<span class="co">#&gt;                                                          expr        min</span>
+<span class="co">#&gt;                       DelayedArray::colSums(rle_matrix[i, j])   74.47508</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(rle_matrix, rows = i, cols = j) 1284.10942</span>
+<span class="co">#&gt;          lq       mean     median         uq       max neval</span>
+<span class="co">#&gt;    79.31653   83.71271   80.13897   81.42439  118.9864    10</span>
+<span class="co">#&gt;  1292.07481 1299.37911 1299.64036 1304.03689 1320.8351    10</span></code></pre></div>
 </div>
 <div id="with-delayed-ops" class="section level2">
 <h2><span class="header-section-number">3.5</span> With delayed ops</h2>
@@ -343,31 +346,31 @@ j &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
 <span class="co">#&gt;                                          expr       min        lq</span>
-<span class="co">#&gt;         DelayedArray::colSums(dense_matrix^2) 1316.7381 1442.1117</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(dense_matrix^2)  266.3058  280.9153</span>
+<span class="co">#&gt;         DelayedArray::colSums(dense_matrix^2) 1305.1857 1454.6109</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(dense_matrix^2)  262.4106  281.9869</span>
 <span class="co">#&gt;       mean    median        uq       max neval</span>
-<span class="co">#&gt;  1459.9733 1474.6550 1496.8039 1587.6119    10</span>
-<span class="co">#&gt;   387.4722  417.6813  447.7697  472.5307    10</span>
+<span class="co">#&gt;  1506.0113 1485.7034 1622.2423 1643.3722    10</span>
+<span class="co">#&gt;   360.0025  367.7995  440.2934  442.3388    10</span>
 <span class="kw">microbenchmark</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(sparse_matrix <span class="op">^</span><span class="st"> </span><span class="dv">2</span>),
                DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(sparse_matrix <span class="op">^</span><span class="st"> </span><span class="dv">2</span>),
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: milliseconds</span>
-<span class="co">#&gt;                                           expr       min       lq</span>
-<span class="co">#&gt;         DelayedArray::colSums(sparse_matrix^2) 1264.0716 1363.074</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(sparse_matrix^2)  529.0654  542.983</span>
+<span class="co">#&gt;                                           expr       min        lq</span>
+<span class="co">#&gt;         DelayedArray::colSums(sparse_matrix^2) 1376.3167 1396.6207</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(sparse_matrix^2)  546.9076  585.1316</span>
 <span class="co">#&gt;       mean    median        uq       max neval</span>
-<span class="co">#&gt;  1478.3990 1456.5185 1578.1508 1769.6818    10</span>
-<span class="co">#&gt;   578.2613  550.6886  646.3959  656.6858    10</span>
+<span class="co">#&gt;  1501.7047 1533.1500 1589.5161 1639.3453    10</span>
+<span class="co">#&gt;   631.1484  617.4235  657.4039  783.6058    10</span>
 <span class="kw">microbenchmark</span>(DelayedArray<span class="op">::</span><span class="kw">colSums</span>(rle_matrix <span class="op">^</span><span class="st"> </span><span class="dv">2</span>),
                DelayedMatrixStats<span class="op">::</span><span class="kw">colSums2</span>(rle_matrix <span class="op">^</span><span class="st"> </span><span class="dv">2</span>),
                <span class="dt">times =</span> times)
 <span class="co">#&gt; Unit: seconds</span>
 <span class="co">#&gt;                                        expr      min       lq     mean</span>
-<span class="co">#&gt;         DelayedArray::colSums(rle_matrix^2) 2.666107 2.673326 2.766047</span>
-<span class="co">#&gt;  DelayedMatrixStats::colSums2(rle_matrix^2) 2.321411 2.408761 2.498563</span>
+<span class="co">#&gt;         DelayedArray::colSums(rle_matrix^2) 1.465638 1.484824 1.579603</span>
+<span class="co">#&gt;  DelayedMatrixStats::colSums2(rle_matrix^2) 1.211764 1.234875 1.297082</span>
 <span class="co">#&gt;    median       uq      max neval</span>
-<span class="co">#&gt;  2.724920 2.838986 2.970594    10</span>
-<span class="co">#&gt;  2.514786 2.579666 2.658754    10</span></code></pre></div>
+<span class="co">#&gt;  1.536663 1.579189 1.919716    10</span>
+<span class="co">#&gt;  1.288734 1.353342 1.400611    10</span></code></pre></div>
 </div>
 <div id="summary" class="section level2">
 <h2><span class="header-section-number">3.6</span> Summary</h2>
@@ -377,7 +380,7 @@ j &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="kw">
 <div class="footnotes">
 <hr />
 <ol start="1">
-<li id="fn1"><p><code>DelayedMatrixStats:::.colSums2()</code> shouldn’t be called by the user because it does not realise delayed operations. It is used here for demonstration purposes on a “<em>pristine</em>” DelayedMatrix to measure the additional overhead of S4 methods<a href="colsums2.html#fnref1">↩</a></p></li>
+<li id="fn1"><p>The ‘seed method’ shouldn’t be called by the user because it does not realise delayed operations. It is used here for demonstration purposes on a “<em>pristine</em>” DelayedMatrix to measure the additional overhead of S4 methods<a href="colsums2.html#fnref1">↩</a></p></li>
 </ol>
 </div>
             </section>

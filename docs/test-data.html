@@ -25,7 +25,7 @@
 <meta name="author" content="Peter Hickey">
 
 
-<meta name="date" content="2017-06-04">
+<meta name="date" content="2017-06-09">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -155,18 +155,18 @@ dense_matrix &lt;-<span class="st"> </span><span class="kw">DelayedArray</span>(
                                   <span class="dt">ncol =</span> <span class="dv">600</span>))
 dense_matrix
 <span class="co">#&gt; DelayedMatrix object of 20000 x 600 doubles:</span>
-<span class="co">#&gt;                [,1]       [,2]       [,3] ...    [,599]    [,600]</span>
-<span class="co">#&gt;     [1,] 0.95070560 0.09865026 0.30533980   . 0.3983158 0.7015749</span>
-<span class="co">#&gt;     [2,] 0.47510290 0.24381241 0.53119689   . 0.3706273 0.7805677</span>
-<span class="co">#&gt;     [3,] 0.71663268 0.83190267 0.41495001   . 0.1572735 0.0622759</span>
-<span class="co">#&gt;     [4,] 0.51031424 0.81021199 0.48288399   . 0.8817700 0.6890185</span>
-<span class="co">#&gt;     [5,] 0.59373621 0.47584845 0.13139782   . 0.4372631 0.6115552</span>
-<span class="co">#&gt;      ...          .          .          .   .         .         .</span>
-<span class="co">#&gt; [19996,] 0.21030458 0.32417577 0.09062090   . 0.7526897 0.3351034</span>
-<span class="co">#&gt; [19997,] 0.91096435 0.23066307 0.79728675   . 0.3207034 0.7036122</span>
-<span class="co">#&gt; [19998,] 0.29748109 0.31942038 0.17291357   . 0.1814319 0.3340224</span>
-<span class="co">#&gt; [19999,] 0.83867138 0.27260421 0.26325607   . 0.9883146 0.3130137</span>
-<span class="co">#&gt; [20000,] 0.07469925 0.54643009 0.44262166   . 0.9973660 0.2112855</span>
+<span class="co">#&gt;                [,1]       [,2]       [,3] ...     [,599]     [,600]</span>
+<span class="co">#&gt;     [1,] 0.99454529 0.46648761 0.87118407   . 0.03498089 0.08406800</span>
+<span class="co">#&gt;     [2,] 0.20633296 0.87447961 0.47569619   . 0.50416338 0.71845883</span>
+<span class="co">#&gt;     [3,] 0.36938076 0.13619145 0.01410702   . 0.14657467 0.19715968</span>
+<span class="co">#&gt;     [4,] 0.45774410 0.79708235 0.50938715   . 0.77635399 0.18389799</span>
+<span class="co">#&gt;     [5,] 0.09994652 0.62287144 0.68057634   . 0.30484684 0.24335585</span>
+<span class="co">#&gt;      ...          .          .          .   .          .          .</span>
+<span class="co">#&gt; [19996,] 0.88809014 0.79182716 0.67861452   .  0.6265261  0.9921975</span>
+<span class="co">#&gt; [19997,] 0.67529658 0.95800657 0.34794065   .  0.6424397  0.4388589</span>
+<span class="co">#&gt; [19998,] 0.34732867 0.06757712 0.22011501   .  0.9819295  0.3463668</span>
+<span class="co">#&gt; [19999,] 0.56930343 0.04110565 0.41527572   .  0.3618444  0.7961651</span>
+<span class="co">#&gt; [20000,] 0.77520091 0.14918206 0.30678274   .  0.4208040  0.5726051</span>
 
 <span class="co"># 60% zero elements</span>
 sparse_matrix &lt;-<span class="st"> </span><span class="kw">seed</span>(dense_matrix)
@@ -175,18 +175,18 @@ sparse_matrix[zero_idx] &lt;-<span class="st"> </span><span class="dv">0</span>
 sparse_matrix &lt;-<span class="st"> </span><span class="kw">DelayedArray</span>(Matrix<span class="op">::</span><span class="kw">Matrix</span>(sparse_matrix, <span class="dt">sparse =</span> <span class="ot">TRUE</span>))
 sparse_matrix
 <span class="co">#&gt; DelayedMatrix object of 20000 x 600 doubles:</span>
-<span class="co">#&gt;                [,1]       [,2]       [,3] ...    [,599]    [,600]</span>
-<span class="co">#&gt;     [1,] 0.00000000 0.09865026 0.00000000   . 0.3983158 0.0000000</span>
-<span class="co">#&gt;     [2,] 0.47510290 0.00000000 0.53119689   . 0.0000000 0.7805677</span>
-<span class="co">#&gt;     [3,] 0.00000000 0.83190267 0.41495001   . 0.0000000 0.0622759</span>
-<span class="co">#&gt;     [4,] 0.00000000 0.00000000 0.00000000   . 0.0000000 0.0000000</span>
-<span class="co">#&gt;     [5,] 0.59373621 0.00000000 0.13139782   . 0.4372631 0.0000000</span>
-<span class="co">#&gt;      ...          .          .          .   .         .         .</span>
-<span class="co">#&gt; [19996,]  0.0000000  0.3241758  0.0000000   . 0.7526897 0.3351034</span>
-<span class="co">#&gt; [19997,]  0.9109644  0.2306631  0.0000000   . 0.3207034 0.7036122</span>
-<span class="co">#&gt; [19998,]  0.0000000  0.0000000  0.0000000   . 0.1814319 0.3340224</span>
-<span class="co">#&gt; [19999,]  0.0000000  0.2726042  0.2632561   . 0.9883146 0.0000000</span>
-<span class="co">#&gt; [20000,]  0.0000000  0.5464301  0.0000000   . 0.9973660 0.2112855</span>
+<span class="co">#&gt;                [,1]       [,2]       [,3] ...     [,599]     [,600]</span>
+<span class="co">#&gt;     [1,] 0.00000000 0.46648761 0.87118407   . 0.03498089 0.08406800</span>
+<span class="co">#&gt;     [2,] 0.20633296 0.00000000 0.47569619   . 0.50416338 0.00000000</span>
+<span class="co">#&gt;     [3,] 0.00000000 0.00000000 0.00000000   . 0.14657467 0.19715968</span>
+<span class="co">#&gt;     [4,] 0.45774410 0.79708235 0.00000000   . 0.00000000 0.00000000</span>
+<span class="co">#&gt;     [5,] 0.09994652 0.62287144 0.00000000   . 0.00000000 0.00000000</span>
+<span class="co">#&gt;      ...          .          .          .   .          .          .</span>
+<span class="co">#&gt; [19996,] 0.88809014 0.00000000 0.00000000   .  0.6265261  0.9921975</span>
+<span class="co">#&gt; [19997,] 0.67529658 0.95800657 0.00000000   .  0.0000000  0.0000000</span>
+<span class="co">#&gt; [19998,] 0.34732867 0.06757712 0.22011501   .  0.9819295  0.3463668</span>
+<span class="co">#&gt; [19999,] 0.00000000 0.04110565 0.00000000   .  0.3618444  0.0000000</span>
+<span class="co">#&gt; [20000,] 0.00000000 0.00000000 0.00000000   .  0.0000000  0.0000000</span>
 
 <span class="co"># HDF5-backed dense matrix</span>
 <span class="co"># hdf5_matrix &lt;- as(dense_matrix, &quot;HDF5Array&quot;)</span>
@@ -197,17 +197,17 @@ rle_matrix &lt;-<span class="st"> </span><span class="kw">RleArray</span>(<span 
 rle_matrix
 <span class="co">#&gt; RleMatrix object of 2000000 x 6 integers:</span>
 <span class="co">#&gt;            [,1] [,2] [,3] [,4] [,5] [,6]</span>
-<span class="co">#&gt;       [1,]    2    2    1    2    2    1</span>
-<span class="co">#&gt;       [2,]    2    2    1    2    2    1</span>
-<span class="co">#&gt;       [3,]    2    2    1    2    2    1</span>
-<span class="co">#&gt;       [4,]    2    2    1    2    2    1</span>
-<span class="co">#&gt;       [5,]    2    2    1    2    2    1</span>
+<span class="co">#&gt;       [1,]    1    2    2    1    2    2</span>
+<span class="co">#&gt;       [2,]    1    2    2    1    2    2</span>
+<span class="co">#&gt;       [3,]    1    2    2    1    2    2</span>
+<span class="co">#&gt;       [4,]    1    2    2    1    2    2</span>
+<span class="co">#&gt;       [5,]    1    2    2    1    2    2</span>
 <span class="co">#&gt;        ...    .    .    .    .    .    .</span>
-<span class="co">#&gt; [1999996,]    1    2    1    2    2    1</span>
-<span class="co">#&gt; [1999997,]    1    2    1    2    2    1</span>
-<span class="co">#&gt; [1999998,]    1    2    1    2    2    1</span>
-<span class="co">#&gt; [1999999,]    1    2    1    2    2    1</span>
-<span class="co">#&gt; [2000000,]    1    2    1    2    2    1</span></code></pre></div>
+<span class="co">#&gt; [1999996,]    2    1    2    1    1    1</span>
+<span class="co">#&gt; [1999997,]    2    1    2    1    1    1</span>
+<span class="co">#&gt; [1999998,]    2    1    2    1    1    1</span>
+<span class="co">#&gt; [1999999,]    2    1    2    1    1    1</span>
+<span class="co">#&gt; [2000000,]    2    1    2    1    1    1</span></code></pre></div>
 <p>Obviously, this is not a comprehensive set of inputs. Rather, it chosen to be somewhat representative of some typical genomics data.</p>
 <div id="measuring-performance" class="section level2">
 <h2><span class="header-section-number">2.1</span> Measuring performance</h2>
